@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Nexus Retail POS PRO - Universal Product Sales Terminal</title>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Custom POS Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ==========================================================================
+       TOP NAVIGATION BAR (NO SIDEBAR - FULL SCREEN & CLEAN)
+       ========================================================================== -->
+  <header class="pos-header">
+    <!-- Left: Collapse Drawer Toggle + Brand / Store Identity -->
+    <div class="header-left">
+      <button class="btn-sidebar-toggle" id="btnToggleLeftSidebar" title="Toggle Terminal Navigation & Settings (F4)">
+        <i class="fa-solid fa-bars-staggered"></i>
+      </button>
+
+      <div class="brand-section">
+        <div class="brand-icon">
+          <i class="fa-solid fa-cubes"></i>
+        </div>
+        <div class="brand-details">
+          <span class="brand-name">NexusPOS</span>
+          <span class="brand-sub">
+            <span class="status-dot"></span> Terminal #01
+          </span>
+        </div>
+      </div>
+    </div>
+
+   
+
+    <!-- Right: High-Frequency Cashier Utilities -->
+    <div class="header-actions">
+      <!-- Audio Mute/Unmute Toggle -->
+      <button class="btn-header" id="soundToggleBtn" title="Toggle Sound Feedback">
+        <i class="fa-solid fa-volume-high" id="soundIcon" style="color:var(--primary);"></i>
+      </button>
+
+      <!-- Held / Parked Orders Drawer Trigger (F6) -->
+      <button class="btn-header" id="btnOpenHeldOrders" title="View Held Orders (F6)">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Held</span>
+        <span class="badge" id="heldOrdersBadge">0</span>
+      </button>
+
+      <!-- Cashier User Badge (Clicking opens Left Drawer) -->
+      <div class="cashier-badge" id="cashierBadgeHeader" title="Click to open Cashier & Terminal Menu">
+        <div class="cashier-avatar">AS</div>
+        <div class="cashier-info">
+          <span class="cashier-name">Alex Smith</span>
+          <span class="cashier-role">Sales Manager</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       ENTERPRISE LEFT COLLAPSIBLE TERMINAL DRAWER & BACKDROP
+       ========================================================================== -->
+  <div class="pos-drawer-backdrop" id="posLeftSidebarBackdrop"></div>
+
+  <aside class="pos-left-drawer executive-theme" id="posLeftSidebar" aria-label="Terminal Navigation Drawer">
+    <!-- Drawer Header -->
+    <div class="drawer-header executive-header">
+      <div class="drawer-brand">
+        <div class="drawer-brand-icon executive-brand-icon">
+          <i class="fa-solid fa-cubes"></i>
+        </div>
+        <div class="drawer-brand-text">
+          <span class="drawer-title">NexusPOS Executive</span>
+          <span class="drawer-subtitle">
+            <span class="status-dot"></span> Terminal #01 • Online
+          </span>
+        </div>
+      </div>
+      <button class="btn-drawer-close executive-close-btn" id="btnCloseLeftSidebar" title="Close Drawer (Esc or F4)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="drawer-body executive-body">
+
+       <!-- <div class="drawer-cashier-card executive-cashier-card">
+        <div class="drawer-avatar executive-avatar">AS</div>
+        <div class="drawer-cashier-meta">
+          <span class="drawer-cashier-name">Alex Smith</span>
+          <span class="drawer-cashier-role">Senior Sales Manager</span>
+          <span class="drawer-status-chip"><span class="status-dot"></span> Active Shift • Counter #01</span>
+        </div>
+      </div> -->
+
+      <!-- Section 4: Shift Performance KPI & Live Date Time -->
+      <div class="drawer-section executive-card-section">
+        <span class="drawer-section-title">
+          <i class="fa-solid fa-chart-line" style="color: #10b981;"></i> Shift Performance
+        </span>
+        <div class="drawer-kpi-grid executive-kpi-grid">
+          <div class="drawer-kpi-card executive-kpi-card">
+            <span class="drawer-kpi-label">Today's Sales</span>
+            <span class="drawer-kpi-val text-success" id="headerTotalSales">$1,480.50</span>
+          </div>
+          <div class="drawer-kpi-card executive-kpi-card">
+            <span class="drawer-kpi-label">Paid Invoices</span>
+            <span class="drawer-kpi-val text-cyan" id="headerInvoiceCount">38</span>
+          </div>
+          <!-- <div class="drawer-kpi-card executive-kpi-card" style="grid-column: span 2; display: flex; align-items: center; justify-content: space-between; padding: 7px 12px;">
+            <div style="display: flex; align-items: center; gap: 7px;">
+              <i class="fa-regular fa-clock" style="color: var(--primary); font-size: 0.85rem;"></i>
+              <span class="drawer-kpi-label" style="margin: 0; font-size: 0.72rem; text-transform: uppercase;">Live Terminal Clock</span>
+            </div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); font-family: var(--font-mono);">
+              <span id="orderLiveDateTime">Sep 21, 2026, 03:50 AM</span> (<span id="liveClock">03:50:00 AM</span>)
+            </div>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- Section 1: Store Branch Configuration Deck -->
+      <div class="drawer-section drawer-meta-group executive-card-section" id="headerMetaGroup">
+        <span class="drawer-section-title">
+          <i class="fa-solid fa-store" style="color: #38bdf8;"></i> Store Branch & Location
+        </span>
+        
+        <div class="executive-branch-card">
+          <div class="branch-card-header">
+            <div class="branch-card-icon">
+              <i class="fa-solid fa-shop"></i>
+            </div>
+            <div class="branch-card-meta">
+              <span class="branch-pill-badge" id="mobileStoreLabel">Main Branch (Downtown HQ)</span>
+              <span class="branch-address-text" id="branchAddressDisplay">Downtown HQ • Commercial Zone</span>
+            </div>
+            <button id="btnToggleMobileMeta" type="button" style="display:none;" aria-hidden="true"></button>
+          </div>
+
+          
+
+          <!-- 3. Branch Selection -->
+          <div class="drawer-field-group">
+            <label class="drawer-field-label" for="branchSelect">
+              <i class="fa-solid fa-map-pin"></i> Select Active Branch
+            </label>
+            <div class="drawer-select-wrap custom-dark-select">
+              <select id="branchSelect" class="drawer-select executive-select header-inline-select" aria-label="Branch Selection">
+                <option value="Main Branch (Downtown HQ)" selected>Main Branch (Downtown HQ)</option>
+                <option value="Airport Express Store">Airport Express Store</option>
+                <option value="North City Showroom">North City Showroom</option>
+                <option value="Uptown Mega Store">Uptown Mega Store</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-chevron"></i>
+            </div>
+          </div>
+
+          <!-- 2. Biller Selection List -->
+          <div class="drawer-field-group">
+            <label class="drawer-field-label" for="billerSelect">
+              <i class="fa-solid fa-user-check" style="color: #0284c7;"></i> Counter Biller / Cashier
+            </label>
+            <div class="drawer-select-wrap custom-dark-select">
+              <select id="billerSelect" class="drawer-select executive-select header-inline-select" aria-label="Biller Selection">
+                <option value="Alex Smith (Terminal 01)" selected>Alex Smith (Terminal 01)</option>
+                <option value="Sarah Connor (Terminal 02)">Sarah Connor (Terminal 02)</option>
+                <option value="David Miller (Express Desk)">David Miller (Express Desk)</option>
+                <option value="Corporate Billing Desk">Corporate Billing Desk</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-chevron"></i>
+            </div>
+          </div>
+
+          <!-- Operating Currency Selection Dropdown -->
+          <div class="drawer-field-group">
+            <label class="drawer-field-label" for="currencySelect">
+              <i class="fa-solid fa-coins" style="color: #f59e0b;"></i> Operating Currency
+            </label>
+            <div class="drawer-select-wrap custom-dark-select">
+              <select id="currencySelect" class="drawer-select executive-select header-inline-select" aria-label="Currency Selection">
+                <option value="USD" selected>USD ($) - US Dollar</option>
+                <option value="BDT">BDT (৳) - Bangladeshi Taka</option>
+                <option value="EUR">EUR (€) - Euro</option>
+                <option value="GBP">GBP (£) - British Pound</option>
+                <option value="INR">INR (₹) - Indian Rupee</option>
+                <option value="SAR">SAR (﷼) - Saudi Riyal</option>
+                <option value="AED">AED (د.إ) - UAE Dirham</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-chevron"></i>
+            </div>
+          </div>
+
+          <!-- Pricing Channel: Retail vs Wholesale Switcher -->
+          <div class="drawer-field-group">
+            <label class="drawer-field-label">
+              <i class="fa-solid fa-tags" style="color: #8b5cf6;"></i> Pricing Channel
+            </label>
+            <div class="pricing-mode-switch sidebar-pricing-switch" id="pricingModeSwitch" title="Switch Sales Channel">
+              <button class="mode-btn active" data-mode="retail" type="button">
+                <i class="fa-solid fa-tag"></i> Retail
+              </button>
+              <button class="mode-btn" data-mode="wholesale" type="button">
+                <i class="fa-solid fa-boxes-packing"></i> Wholesale
+              </button>
+            </div>
+          </div>
+
+          <div class="branch-card-footer">
+            <span class="branch-bin-tag"><i class="fa-solid fa-shield-halved"></i> BIN: 00294819</span>
+            <span class="branch-sync-tag"><i class="fa-solid fa-cloud-arrow-up"></i> Realtime Sync</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Quick Operations (Recent Receipts) -->
+      <div class="drawer-section executive-card-section">
+        <span class="drawer-section-title">
+          <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Fast Terminal Operations
+        </span>
+
+        <div class="executive-quick-actions">
+          <!-- 9. List of Recent Receipts (F9) -->
+          <button class="executive-action-card" id="btnOpenRecentReceipts" title="View Recent Receipts & Invoices (F9)" type="button">
+            <div class="action-card-icon icon-receipt">
+              <i class="fa-solid fa-receipt"></i>
+            </div>
+            <div class="action-card-content">
+              <div class="action-card-title-row">
+                <span class="action-card-title">Recent Receipts</span>
+                <span class="shortcut-kbd">F9</span>
+              </div>
+              <span class="action-card-subtitle">Invoices, reprint & reload cart</span>
+            </div>
+            <i class="fa-solid fa-chevron-right action-arrow"></i>
+          </button>
+          <!-- 11. List of Recent Transactions -->
+          <button class="drawer-nav-item executive-nav-item" id="btnOpenTransactionsModal" title="Recent Register & Payment Transactions" type="button">
+            <div class="nav-item-icon icon-emerald">
+              <i class="fa-solid fa-money-bill-transfer"></i>
+            </div>
+            <div class="nav-item-text">
+              <span class="nav-item-title">Register Transactions</span>
+              <span class="nav-item-desc">Live payment audit & register ledger</span>
+            </div>
+            <i class="fa-solid fa-chevron-right nav-arrow"></i>
+          </button>
+          
+          <button class="drawer-nav-item executive-nav-item" id="btnOpenShiftModal" title="Cash Drawer / Shift Summary" type="button">
+            <div class="nav-item-icon icon-teal">
+              <i class="fa-solid fa-cash-register"></i>
+            </div>
+            <div class="nav-item-text">
+              <span class="nav-item-title">Cash Drawer & Shift</span>
+              <span class="nav-item-desc">Float, expected cash & end of shift</span>
+            </div>
+            <i class="fa-solid fa-chevron-right nav-arrow"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 3: Active Cashier Profile Card -->
+      
+
+      <!-- Section 5: Terminal Navigation & Registers -->
+      <div class="drawer-section executive-card-section">
+        <span class="drawer-section-title">
+          <i class="fa-solid fa-layer-group" style="color: #818cf8;"></i> Terminal Tools
+        </span>
+        <div class="drawer-nav-list executive-nav-list">
+
+          <!-- POS Quick Calculator -->
+          <button class="drawer-nav-item executive-nav-item" id="btnOpenCalculatorModal" title="Executive POS Calculator (F10)" type="button">
+            <div class="nav-item-icon icon-amber">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div class="nav-item-text">
+              <span class="nav-item-title">POS Calculator</span>
+              <span class="nav-item-desc">Quick math, retail margin & cash calc</span>
+            </div>
+            <span class="shortcut-kbd">F10</span>
+          </button>
+          
+          <button class="drawer-nav-item executive-nav-item" id="btnOpenShortcuts" title="Keyboard Shortcuts (F1)" type="button">
+            <div class="nav-item-icon icon-indigo">
+              <i class="fa-solid fa-keyboard"></i>
+            </div>
+            <div class="nav-item-text">
+              <span class="nav-item-title">Keyboard Shortcuts</span>
+              <span class="nav-item-desc">Full terminal quick keys reference</span>
+            </div>
+            <span class="shortcut-kbd">F1</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+     <div class="drawer-kpi-card executive-kpi-card" style="grid-column: span 2; display: flex; align-items: center; justify-content: space-between; padding: 7px 12px;">
+            <div style="display: flex; align-items: center; gap: 7px;">
+              <!-- <span class="drawer-kpi-label" style="margin: 0; font-size: 0.72rem; text-transform: uppercase;">Live Terminal Clock</span> -->
+            </div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); font-family: var(--font-mono);">
+              <i class="fa-regular fa-clock" style="color: var(--primary); font-size: 0.85rem;"></i>
+              <span id="liveClock">03:50:00 AM</span>
+            </div>
+          </div>
+  </aside>
+
+  <!-- ==========================================================================
+       MOBILE SCREEN VIEW SWITCHER (VISIBLE ON MOBILE ONLY)
+       ========================================================================== -->
+  <nav class="mobile-view-switcher" id="mobileViewSwitcher">
+    <button class="btn-mobile-tab active" id="btnMobileTabCatalog">
+      <i class="fa-solid fa-boxes-stacked"></i> <span>Catalog</span>
+    </button>
+    <button class="btn-mobile-tab" id="btnMobileTabCart">
+      <i class="fa-solid fa-cart-shopping"></i> <span>Cart</span>
+      <span class="mobile-cart-badge" id="mobileCartCountBadge">0</span>
+    </button>
+    <button class="btn-mobile-tab" id="btnMobileTabReceipts">
+      <i class="fa-solid fa-receipt"></i> <span>Receipts</span>
+    </button>
+    <button class="btn-mobile-tab" id="btnMobileTabTransactions">
+      <i class="fa-solid fa-money-bill-transfer"></i> <span>Shift</span>
+    </button>
+  </nav>
+
+  <!-- ==========================================================================
+       MAIN POS WORKSPACE (BALANCED 2-COLUMN DESK - FULLY RESPONSIVE)
+       ========================================================================== -->
+  <main class="pos-workspace" id="posWorkspace" data-mobile-active="catalog">
+
+    <!-- ========================================================================
+         LEFT COLUMN: ULTRA-SPACIOUS DOMINANT CART & RETAIL CHECKOUT (~58-62%)
+         ======================================================================== -->
+    <section class="cart-checkout-section" id="cartCheckoutSection">
+
+      <!-- Consolidated Ultra-Compact Cart Control Deck -->
+      <div class="cart-top-control-deck">
+        <!-- Row 1: Order Meta & Channel Switcher & Density/Sort in ONE Single Line -->
+        <div class="cart-ctrl-row-1">
+          <div class="order-badge-row">
+            <!-- <span class="order-id-badge">
+              <i class="fa-solid fa-receipt"></i>
+              <span id="currentOrderNumber">#ORD-1048</span>
+            </span> -->
+            <!-- Compact Customer Profile Pill with Dropdown Wrapper -->
+            <div class="customer-selector-wrapper" id="customerSelectorWrapper">
+              <div class="customer-profile-card-compact" id="btnCustomerSelector" title="Click to Select Customer (F8)" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+                <div class="customer-avatar-icon-compact">
+                  <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="customer-name-box-compact">
+                  <span class="cust-name">
+                    <span id="selectedCustomerName">Walk-in Customer</span>
+                    <i class="fa-solid fa-angle-down cust-dropdown-arrow" id="custDropdownArrow" style="font-size:0.65rem; color:var(--text-muted); transition: transform 0.2s ease;"></i>
+                  </span>
+                  <span class="cust-sub" id="selectedCustomerPhone" style="display:none;">General Retail Sale</span>
+                </div>
+                <div class="customer-badges-group-compact">
+                  <div class="cust-points-badge" id="customerPointsBadge" style="display: none;">
+                    <i class="fa-solid fa-star"></i>
+                    <span id="customerPointsValue">0 Pts</span>
+                  </div>
+                  <div class="cust-due-badge" id="customerDueBadge" style="display: none;">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span id="customerDueValue">Due: $0.00</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Inline Customer Dropdown Menu -->
+              <div class="customer-dropdown-menu" id="customerDropdownMenu">
+                <div class="cust-dropdown-search-wrap">
+                  <i class="fa-solid fa-magnifying-glass cust-search-icon"></i>
+                  <input type="text" id="custDropdownSearchInput" class="cust-dropdown-search-input" placeholder="Search customer by name or phone..." autocomplete="off" />
+                  <button type="button" class="btn-clear-cust-search" id="btnClearCustDropdownSearch" style="display:none;" title="Clear search">&times;</button>
+                </div>
+
+                <div class="cust-dropdown-list" id="custDropdownList">
+                  <!-- Dynamically rendered customer suggestions -->
+                </div>
+
+                <div class="cust-dropdown-footer">
+                  <button type="button" class="btn-dropdown-add-cust" id="btnDropdownOpenAddCustomer">
+                    <i class="fa-solid fa-user-plus"></i> + Register New Customer
+                  </button>
+                  <span class="cust-dropdown-hint"><kbd>Esc</kbd> close</span>
+                </div>
+              </div>
+            </div>
+            <!-- 6. Reference Number Input Pill -->
+            <div class="order-ref-pill" title="Order Reference / PO / Booking / Tracking #">
+              <i class="fa-solid fa-hashtag"></i>
+              <input
+                type="text"
+                id="orderReferenceInputDeck"
+                class="order-ref-input"
+                placeholder="Ref:#ORD-1048"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                id="btnGenerateRefNumber"
+                class="btn-gen-ref-num"
+                title="Auto-Generate Reference #"
+                aria-label="Generate Reference Number"
+              >
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="cart-header-tools">
+            <!-- Density Switcher -->
+            <button class="btn-tool-compact" id="btnToggleCartDensity" title="Toggle Compact / Spacious View">
+              <i class="fa-solid fa-table-cells-large" id="densityIcon"></i>
+              <span id="densityText">Compact</span>
+            </button>
+            <!-- Quick Sort -->
+            <select class="cart-sort-compact" id="cartSortSelect" title="Sort Cart Items">
+              <option value="recent">Sort: Recent</option>
+              <option value="name">Name (A-Z)</option>
+              <option value="price-desc">Highest Price</option>
+              <option value="qty-desc">Highest Qty</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Customer Selector + In-Cart Filter + Hold + Clear in ONE COMPACT SECTION -->
+        <div class="cart-ctrl-row-2">
+          
+
+          <!-- 10. Customer Quick Controls: Add Customer & Walk-in Revert -->
+          <!-- <div class="customer-quick-actions">
+            <button type="button" class="btn-tool-compact btn-cust-quick-add" id="btnQuickAddCustomer" title="Register New Customer (F8)">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>+ Add</span>
+            </button>
+            <button type="button" class="btn-tool-compact btn-cust-walkin" id="btnResetWalkIn" title="Switch to Walk-in Customer">
+              <i class="fa-solid fa-person-walking"></i>
+              <span>Walk-in</span>
+            </button>
+          </div> -->
+
+          <!-- Barcode Quick Scan Box (Rapid Item Addition) -->
+          <div class="cart-barcode-scan-box" id="cartFilterBar" title="Quick Barcode Scanner (Scan or type SKU/Barcode & press Enter, Hotkey: F3)">
+            <i class="fa-solid fa-barcode barcode-scan-icon"></i>
+            <input
+              type="text"
+              id="cartSearchFilterInput"
+              class="cart-search-input-compact"
+              placeholder="Scan Barcode / SKU (F3)..."
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <span class="cart-scan-hotkey-badge">F3</span>
+            <button id="btnClearCartSearch" type="button" title="Clear Barcode Input" style="background:none; border:none; color:var(--text-subtle); cursor:pointer; display:none; font-size:0.85rem; padding:0 2px;">&times;</button>
+          </div>
+
+          <!-- Hold & Clear Buttons Together in Same Row -->
+          <div class="cart-actions-compact">
+            <button class="btn-tool-compact btn-hold" id="btnHoldCart" title="Park/Hold this order (F6)">
+              <i class="fa-solid fa-hand"></i>
+              <span>Hold (F6)</span>
+            </button>
+            <button class="btn-tool-compact btn-clear" id="btnClearCart" title="Empty Cart (F7)">
+              <i class="fa-solid fa-trash-can"></i>
+              <span>Clear (F7)</span>
+            </button>
+          </div>
+           <!-- Center: Assigned Sales Representative -->
+    <div class="header-center-controls">
+      <!-- 1. Salesmen Dropdown Pill -->
+      <div class="header-select-pill" title="Assigned Sales Representative">
+        <i class="fa-solid fa-user-tie pill-icon" style="color: #7c3aed;"></i>
+        <div class="pill-body">
+          <span class="pill-label"></span>
+          <select id="salesmanSelect" class="header-inline-select" aria-label="Salesman Selection">
+            <option value="Alex Smith (Sales Rep #101)" selected>Alex Smith</option>
+            <option value="Sarah Connor (Sales Rep #102)">Sarah Connor</option>
+            <option value="David Miller (Sales Rep #103)">David Miller</option>
+            <option value="Emma Watson (Sales Rep #104)">Emma Watson</option>
+            <option value="Direct Store Sale (No Rep)">Oil Rasel</option>
+          </select>
+        </div>
+      </div>
+    </div>
+        </div>
+      </div>
+
+      <!-- Enterprise Compact Cart Table Head -->
+      <div class="cart-table-head" id="cartTableHead">
+        <span>#</span>
+        <span>Product Description / SKU</span>
+        <span class="col-center">Batch</span>
+        <span class="col-center">Qty</span>
+        <span class="col-center">Unit</span>
+        <span class="col-right">Price</span>
+        <span class="col-center">Disc</span>
+        <span class="col-center">Tax</span>
+        <span class="col-right">Total</span>
+        <span class="col-center">Act</span>
+      </div>
+
+      <!-- Spacious Cart Items Viewport -->
+      <div class="cart-items-viewport" id="cartItemsList">
+        <!-- Empty Cart Notice -->
+        <div class="cart-empty-state" id="cartEmptyState">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <h4>Cart is Empty</h4>
+          <p>Scan barcode, search SKU, or click any product from the catalog to add here.</p>
+        </div>
+        <!-- Cart rows dynamically generated via JavaScript -->
+      </div>
+
+      <!-- Cart Bill Summary & Payment Deck (Ultra Compact: Subtotal, Discount, Shipping, VAT, Total & Pay All-In-One) -->
+      <div class="cart-bottom-deck compact-deck">
+        <!-- 4-in-1 Compact Financial Matrix -->
+        <div class="billing-matrix-grid">
+          <!-- 1. Subtotal -->
+          <div class="matrix-cell">
+            <div class="matrix-label">Subtotal:</div>
+            <div class="matrix-value" id="summarySubtotal">$0.00</div>
+          </div>
+
+          <!-- 2. Order Discount (Directly Editable Field + Mode Toggle + Presets) -->
+          <div class="matrix-cell matrix-cell-disc" id="summaryDiscountCell">
+            <div class="matrix-label">
+              <span>Order Disc:</span>
+              <span class="matrix-discount-tag" id="summaryDiscountLabel" style="display:none;">0%</span>
+            </div>
+            <div class="matrix-input-row">
+              <input 
+                type="number" 
+                id="summaryDiscountInput" 
+                class="matrix-deck-input" 
+                min="0" 
+                step="any" 
+                value="0" 
+                placeholder="0" 
+                title="Edit Order Discount"
+                autocomplete="off"
+              />
+              <button 
+                type="button" 
+                class="btn-matrix-mode" 
+                id="btnToggleOrderDiscMode" 
+                title="Switch Percentage (%) or Flat ($)"
+              >%</button>
+              <span class="matrix-value" id="summaryDiscountAmount" style="display:none;">$0.00</span>
+            </div>
+          </div>
+
+          <!-- 3. Shipping Cost (Directly Editable Field) -->
+          <div class="matrix-cell matrix-cell-shipping" id="summaryCourierRow">
+            <div class="matrix-label"><i class="fa-solid fa-truck-fast"></i> Shipping Cost:</div>
+            <div class="matrix-input-row">
+              <span class="matrix-input-prefix" id="summaryShippingPrefix">$</span>
+              <input 
+                type="number" 
+                id="summaryShippingInput" 
+                class="matrix-deck-input" 
+                min="0" 
+                step="any" 
+                value="0" 
+                placeholder="0.00" 
+                title="Edit Shipping Cost"
+                autocomplete="off"
+              />
+              <span class="matrix-value" id="summaryCourierFee" style="display:none;">$0.00</span>
+            </div>
+          </div>
+
+          <!-- 4. VAT / Tax (Dropdown + Computed Display) -->
+          <div class="matrix-cell matrix-cell-tax" id="summaryTaxCell">
+            <div class="matrix-label">
+              <span><i class="fa-solid fa-receipt"></i> VAT Rate:</span>
+              <span class="matrix-value matrix-tax-val" id="summaryTax">$0.00</span>
+            </div>
+            <div class="matrix-vat-row">
+              <select id="vatRateSelect" class="matrix-vat-select" title="Select VAT Rate">
+                <option value="0.05" selected>5% (Standard VAT)</option>
+                <option value="0">0% (Tax Exempt)</option>
+                <option value="0.075">7.5% (Reduced VAT)</option>
+                <option value="0.10">10% (Retail Tax)</option>
+                <option value="0.15">15% (High Rate VAT)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tier 2: Rewards & Promo Bar (Coupon Code + Earned Points) -->
+        <div class="rewards-promo-bar">
+          <span class="order-items-badge" id="cartTotalItemsCountBadge">0 Items</span>
+          <!-- Coupon Option -->
+          <div class="coupon-section">
+            <div class="coupon-input-wrap">
+              <i class="fa-solid fa-ticket coupon-icon"></i>
+              <input 
+                type="text" 
+                id="cartCouponInput" 
+                class="coupon-input" 
+                placeholder="Coupon code (e.g. SAVE10, FLAT50)..." 
+                autocomplete="off" 
+              />
+              <button type="button" id="btnApplyCoupon" class="btn-coupon-apply" title="Apply Coupon Code">Apply</button>
+            </div>
+            <div id="appliedCouponTag" class="applied-coupon-tag" style="display:none;">
+              <i class="fa-solid fa-tag"></i>
+              <span id="appliedCouponText">SAVE10 (-10%)</span>
+              <button type="button" id="btnRemoveCoupon" class="btn-remove-coupon" title="Remove Coupon">&times;</button>
+            </div>
+          </div>
+
+          <!-- Earned Points Chip -->
+          <div class="earned-points-chip" id="orderEarnedPointsBadge" title="Loyalty Points earned on this transaction">
+            <div class="points-icon-circle">
+              <i class="fa-solid fa-coins"></i>
+            </div>
+            <div class="points-text-group">
+              <span class="points-label">Earned Points</span>
+              <strong class="points-value" id="orderEarnedPoints">+0 Pts</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tier 3: Master Pay & Total Checkout Button (Unified Action Bar) -->
+        <div class="master-pay-wrapper">
+          <button class="btn-pay-master" id="btnTriggerPayment" title="Complete Sale & Process Payment (F2)">
+            <div class="pay-master-left">
+              <div class="pay-icon-circle">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div class="pay-text-group">
+                <span class="pay-action-title">PAY / CHARGE</span>
+                <span class="pay-shortcut-pill"><span class="key-hint">F2</span> Complete Sale</span>
+              </div>
+            </div>
+            <div class="pay-master-divider"></div>
+            <div class="pay-master-right">
+              <span class="pay-total-sublabel">TOTAL AMOUNT TO PAY</span>
+              <div class="pay-total-amount-box">
+                <span class="total-number-compact" id="summaryGrandTotal">$0.00</span>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================
+         RIGHT COLUMN: COMPACT PRODUCT CATALOG & RAPID DISCOVERY (~38-42%)
+         ======================================================================== -->
+    <section class="sales-catalog-section" id="salesCatalogSection">
+
+      <!-- Search & Barcode Scanner Bar -->
+      <div class="catalog-search-bar">
+        <div class="search-icon-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <input
+          type="text"
+          id="productSearchInput"
+          class="search-input-field"
+          placeholder="Search products by Name, SKU, Barcode... (F4)"
+          autocomplete="off"
+          autofocus
+        />
+        <span class="search-key-badge">F4</span>
+        <button class="btn-custom-item" id="btnOpenCustomItem" title="Add Non-Inventory Custom Item">
+          <i class="fa-solid fa-plus"></i>
+          <span>Item</span>
+        </button>
+        <!-- Toggle / Collapse Catalog Section (Slides right & hides) -->
+        <button type="button" class="btn-toggle-catalog" id="btnToggleCatalogSidebar" title="Collapse / Hide Catalog (Right &gt;)">
+          <i class="fa-solid fa-chevron-right" id="catalogToggleIcon"></i>
+        </button>
+      </div>
+
+      <!-- Catalog Mode Switcher Bar (All Product, Category, Brand) -->
+      <div class="catalog-mode-header">
+        <div class="catalog-mode-switcher" id="catalogModeSwitcher">
+          <button type="button" class="catalog-mode-btn active" data-catalog-tab="all" id="tabCatalogAll">
+            <i class="fa-solid fa-border-all"></i>
+            <span>Products</span>
+            <span class="catalog-tab-badge" id="badgeAllCount">18</span>
+          </button>
+          <button type="button" class="catalog-mode-btn" data-catalog-tab="category" id="tabCatalogCategory">
+            <i class="fa-solid fa-shapes"></i>
+            <span>Category</span>
+            <span class="catalog-tab-badge" id="badgeCatCount">6</span>
+          </button>
+          <button type="button" class="catalog-mode-btn" data-catalog-tab="brand" id="tabCatalogBrand">
+            <i class="fa-solid fa-tags"></i>
+            <span>Brand</span>
+            <span class="catalog-tab-badge" id="badgeBrandCount">12</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Product Catalog Content Area -->
+      <div class="catalog-content-area" id="catalogContentArea">
+        <!-- Active Filter Breadcrumb Bar (Visible when filtered by category or brand) -->
+        <div class="catalog-active-filter-bar" id="catalogActiveFilterBar" style="display: none;">
+          <button type="button" class="btn-filter-back" id="btnFilterBack" title="Go Back">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span id="filterBackLabel">Back to Categories</span>
+          </button>
+          <div class="filter-status-box">
+            <span class="filter-type-tag" id="filterTypeTag">Category:</span>
+            <span class="filter-name-tag" id="filterNameTag">Electronics</span>
+            <span class="filter-count-chip" id="filterCountChip">4 items</span>
+            <button type="button" class="btn-clear-filter-chip" id="btnClearCatalogFilter" title="Clear Filter">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 1: Products Grid View -->
+        <div class="catalog-view-section" id="viewProductsGrid">
+          <div class="products-grid" id="productsGrid">
+            <!-- Dynamically Rendered via JavaScript -->
+          </div>
+          <!-- Empty State -->
+          <div class="catalog-empty-state" id="catalogEmptyState" style="display: none;">
+            <i class="fa-solid fa-box-open"></i>
+            <h3>No matching retail products found</h3>
+            <p>Scan barcode, change search keyword, or click <strong>+ Custom Item</strong> to add non-inventory goods.</p>
+          </div>
+        </div>
+
+        <!-- Section 2: Category Cards Grid View -->
+        <div class="catalog-view-section" id="viewCategoriesGrid" style="display: none;">
+          <div class="category-cards-grid" id="categoryCardsGrid">
+            <!-- Dynamically Rendered via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Section 3: Brand Cards Grid View -->
+        <div class="catalog-view-section" id="viewBrandsGrid" style="display: none;">
+          <div class="brand-cards-grid" id="brandCardsGrid">
+            <!-- Dynamically Rendered via JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Floating Reopen Catalog Button (Visible when Catalog is collapsed into right side) -->
+    <button type="button" class="catalog-collapsed-reopen-btn" id="btnReopenCatalogFloating" title="Open Product Catalog (Click or Press F4)">
+      <i class="fa-solid fa-chevron-left"></i>
+      <span class="reopen-label">Catalog</span>
+    </button>
+  </main>
+
+  <!-- ==========================================================================
+       FLOATING STICKY CART BAR (MOBILE ONLY WHEN CART HAS ITEMS)
+       ========================================================================== -->
+  <div class="mobile-sticky-cart-bar" id="mobileStickyCartBar">
+    <div class="mobile-cart-meta">
+      <span class="mobile-cart-units"><span id="mobileBarItemCount">0</span> items in cart</span>
+      <span class="mobile-cart-price" id="mobileBarTotalPrice">$0.00</span>
+    </div>
+    <button class="btn-mobile-checkout-now" id="btnMobileGoToCart">
+      <span>View Cart & Pay</span>
+      <i class="fa-solid fa-arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 1: CHECKOUT & PAYMENT MODAL (EXECUTIVE SPLIT PAYMENT & LEDGER)
+       ========================================================================== -->
+  <div class="modal-overlay" id="paymentModalOverlay">
+    <div class="pos-modal pos-modal-payment">
+      <div class="modal-header modal-header-compact">
+        <div class="modal-title-wrap">
+          <h3 class="modal-title">
+            <i class="fa-solid fa-cash-register" style="color:var(--primary);"></i> Complete Transaction
+          </h3>
+          <div class="modal-sub-meta">
+            <span class="meta-pill-tag"><i class="fa-solid fa-receipt"></i> <span id="modalOrderBadge">#ORD-1001</span></span>
+            <span class="meta-pill-tag"><i class="fa-solid fa-user"></i> <span id="modalCustomerBadge">Walk-in Customer</span></span>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnClosePayModal" title="Close (Esc)">&times;</button>
+      </div>
+
+      <div class="modal-body modal-body-compact">
+        <!-- Customer Profile & Ledger History Deck (Visible only for Registered Customers, Hidden for Walk-in) -->
+        <div class="modal-customer-profile-deck" id="modalCustomerProfileDeck" style="display:none;">
+          <div class="modal-cust-identity-row">
+            <div class="modal-cust-avatar-badge">
+              <i class="fa-solid fa-user-check"></i>
+            </div>
+            <div class="modal-cust-identity-info">
+              <div class="modal-cust-name-line">
+                <strong class="modal-cust-name" id="modalCustProfileName">Customer Name</strong>
+                <span class="modal-cust-tier-badge" id="modalCustProfileTier">Gold VIP</span>
+              </div>
+              <span class="modal-cust-phone" id="modalCustProfilePhone">+880 1711-223344</span>
+            </div>
+            <span class="modal-cust-ledger-tag">
+              <i class="fa-solid fa-file-invoice-dollar"></i> Customer Ledger Account
+            </span>
+          </div>
+
+          <div class="modal-cust-kpis-grid">
+            <div class="modal-cust-kpi-item">
+              <span class="modal-cust-kpi-label"><i class="fa-solid fa-receipt"></i> Total Invoices</span>
+              <strong class="modal-cust-kpi-val kpi-invoices-val" id="modalCustInvoicesCount">0 Orders</strong>
+            </div>
+            <div class="modal-cust-kpi-item">
+              <span class="modal-cust-kpi-label"><i class="fa-solid fa-circle-exclamation"></i> Total Previous Due</span>
+              <strong class="modal-cust-kpi-val kpi-due-val" id="modalCustPreviousDue">$0.00</strong>
+            </div>
+            <div class="modal-cust-kpi-item">
+              <span class="modal-cust-kpi-label"><i class="fa-solid fa-piggy-bank"></i> Deposit Wallet</span>
+              <strong class="modal-cust-kpi-val kpi-deposit-val" id="modalCustDepositBalance">$0.00</strong>
+            </div>
+            <div class="modal-cust-kpi-item">
+              <span class="modal-cust-kpi-label"><i class="fa-solid fa-star"></i> Point Wallet</span>
+              <strong class="modal-cust-kpi-val kpi-points-val" id="modalCustRunningPoints">0 Pts</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Executive Top Financial KPI Bar (3-Tile Matrix) -->
+        <div class="pay-kpi-deck">
+          <div class="pay-kpi-card pay-kpi-payable">
+            <span class="pay-kpi-label"><i class="fa-solid fa-file-invoice-dollar"></i> Total Payable</span>
+            <span class="pay-kpi-val" id="modalPayableTotal">$0.00</span>
+          </div>
+          <div class="pay-kpi-card pay-kpi-tendered">
+            <span class="pay-kpi-label"><i class="fa-solid fa-wallet"></i> Total Paid</span>
+            <span class="pay-kpi-val" id="modalTotalTendered">$0.00</span>
+          </div>
+          <div class="pay-kpi-card pay-kpi-status status-settled" id="modalFinancialStatusTile">
+            <span class="pay-kpi-label" id="modalStatusLabel"><i class="fa-solid fa-circle-check"></i> Settlement</span>
+            <span class="pay-kpi-val" id="modalChangeDue">$0.00</span>
+          </div>
+        </div>
+
+        <!-- 2. Quick Tender Ribbon -->
+        <!-- <div class="quick-tender-ribbon">
+          <span class="quick-tender-label"><i class="fa-solid fa-bolt"></i> Quick Tender:</span>
+          <button type="button" class="btn-quick-tender" data-tender="exact"><i class="fa-solid fa-check-double"></i> Exact</button>
+          <button type="button" class="btn-quick-tender" data-tender="round"><i class="fa-solid fa-arrows-rotate"></i> Round</button>
+          <button type="button" class="btn-quick-tender" data-tender="10">+10</button>
+          <button type="button" class="btn-quick-tender" data-tender="50">+50</button>
+          <button type="button" class="btn-quick-tender" data-tender="100">+100</button>
+          <button type="button" class="btn-quick-tender" data-tender="500">+500</button>
+          <button type="button" class="btn-quick-tender btn-tender-clear" data-tender="clear">Clear</button>
+        </div> -->
+
+        <!-- Hidden compat elements for existing references -->
+        <span style="display:none;" id="modalCurrencyPrefix">$</span>
+        <div id="cashTenderGroup" style="display:none;"></div>
+
+        <!-- 3. Dynamic Split Payment Container -->
+        <div class="split-pay-section">
+          <div class="split-pay-section-head">
+            <label class="form-label" style="margin-bottom:0;">
+              <i class="fa-solid fa-money-check-dollar"></i> Payment Breakdown & Accounts
+            </label>
+            <button type="button" class="btn-add-split-pay" id="btnAddPaymentRow" title="Add another payment method / Split Payment">
+              <i class="fa-solid fa-plus"></i> Add Payment Method
+            </button>
+          </div>
+
+          <div class="payment-rows-container" id="paymentRowsContainer">
+            <!-- Row 1: Default Primary Payment Row -->
+            <div class="split-pay-row" data-row-id="1">
+              <div class="pay-field-method">
+                <label class="pay-field-micro-label">Method</label>
+                <select class="pay-row-select pay-row-method-select" id="primaryPayMethodSelect">
+                  <option value="cash" selected>💵 Cash</option>
+                  <option value="card">💳 Card</option>
+                  <option value="mobile">📱 Micro Wallet</option>
+                  <option value="bank">🏦 Bank</option>
+                </select>
+              </div>
+              <div class="pay-field-account">
+                <label class="pay-field-micro-label">Account</label>
+                <select class="pay-row-select pay-row-account-select" id="primaryPayAccountSelect">
+                  <option value="cash_register" selected>Cash Drawer (Drawer #01)</option>
+                  <option value="city_bank">City Bank (Corporate ****8821)</option>
+                  <option value="brac_bank">BRAC Bank (Merchant ****4419)</option>
+                  <option value="dbbl">DBBL (Core ****1092)</option>
+                  <option value="bkash">bKash (Merchant 01700-000000)</option>
+                  <option value="nagad">Nagad (Enterprise 01800-000000)</option>
+                </select>
+              </div>
+              <div class="pay-field-amount">
+                <label class="pay-field-micro-label">Amount</label>
+                <div class="pay-amount-input-wrap">
+                  <span class="pay-curr-tag">$</span>
+                  <input type="number" step="any" class="pay-row-amount-input" id="cashReceivedInput" placeholder="0.00" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Due Sale Warning Box (Visible when Tendered < Payable) -->
+        <div id="dueNoticeBox" class="pay-due-notice-card" style="display:none;">
+          <div class="due-notice-header">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Credit / Due Sale Detected (<span id="modalDueNoticeAmount">$0.00</span>)</span>
+          </div>
+          <p class="due-notice-text">
+            Remaining unpaid balance will be logged into <strong id="dueCustomerTargetName">Customer</strong>'s ledger account.
+          </p>
+        </div>
+
+        <!-- 5. Sales Note, Payment Note, Terms & Conditions (Compact 2-Column Grid) -->
+        <div class="pay-notes-grid">
+          <div class="pay-note-col">
+            <div class="form-group-compact">
+              <label class="form-label-compact" for="modalSalesNote">
+                <i class="fa-solid fa-comment-dots"></i> Sales Note / Order Remark
+              </label>
+              <input type="text" class="form-input form-input-compact" id="modalSalesNote" placeholder="e.g. Delivery instructions, priority order..." autocomplete="off" />
+            </div>
+            <div class="form-group-compact">
+              <label class="form-label-compact" for="modalPaymentNote">
+                <i class="fa-solid fa-pen-to-square"></i> Payment Note / Reference
+              </label>
+              <input type="text" class="form-input form-input-compact" id="modalPaymentNote" placeholder="e.g. Cheque #, Card Auth Code, Transaction ID..." autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="pay-note-col">
+            <div class="form-group-compact">
+              <label class="form-label-compact" for="modalTermsConditionsSelect">
+                <i class="fa-solid fa-scale-balanced"></i> Terms & Conditions
+              </label>
+              <select class="form-select form-input-compact" id="modalTermsConditionsSelect">
+                <option value="standard" selected>Standard Retail T&C (7 Days Return / Exchange)</option>
+                <option value="warranty">Electronics Warranty (1-Year Official Warranty)</option>
+                <option value="final_sale">Final Clearance Sale (Non-Returnable / No Refund)</option>
+                <option value="wholesale">Wholesale Credit Terms (Net 15 Days Payment)</option>
+                <option value="grocery">FMCG & Groceries (24h Replacement for Perishables)</option>
+              </select>
+            </div>
+            <div class="form-group-compact">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label class="form-label-compact" for="orderReferenceInput" style="margin-bottom:0;">
+                  <i class="fa-solid fa-barcode"></i> Invoice Reference #
+                </label>
+                <button type="button" id="btnModalGenerateRef" class="btn-gen-ref-mini" title="Auto-Generate Reference #" style="border:none; background:transparent; color:var(--primary); cursor:pointer; font-size:0.72rem; display:inline-flex; align-items:center; gap:4px; font-weight:600;">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Ref
+                </button>
+              </div>
+              <input type="text" class="form-input form-input-compact" id="orderReferenceInput" placeholder="e.g. Warranty SN #88392, Courier ID" autocomplete="off" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer modal-footer-compact">
+        <div class="modal-footer-summary" id="modalFooterSummaryInfo">
+          <span class="footer-status-chip" id="modalPaymentSummaryBadge">
+            <i class="fa-solid fa-shield-check"></i> Ready to Finalize
+          </span>
+        </div>
+        <div class="modal-footer-btns">
+          <button type="button" class="btn-header" id="btnCancelPayment">
+            <i class="fa-solid fa-xmark"></i> Cancel (Esc)
+          </button>
+          <button type="button" class="btn-pay-modal" id="btnConfirmPaymentAndPrint">
+            <i class="fa-solid fa-print"></i> Confirm & Print (F2)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 2: 80mm RETAIL THERMAL RECEIPT MODAL (WARRANTY & RETURN POLICY)
+       ========================================================================== -->
+  <div class="modal-overlay" id="receiptModalOverlay">
+    <div class="pos-modal" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-receipt"></i> Retail Sales Receipt</h3>
+        <button class="btn-close-modal" id="btnCloseReceiptModal">&times;</button>
+      </div>
+      <div class="modal-body" style="background: #f8fafc; padding: 14px;">
+        <!-- 80mm Printable Receipt Content -->
+        <div class="receipt-wrapper" id="printableReceiptArea">
+          <div class="receipt-header">
+            <div class="receipt-store-title" id="recBranchTitle">NEXUS RETAIL SUPERSTORE</div>
+            <div class="receipt-store-sub" id="recBranchAddress">Main Branch (Downtown HQ) &bull; Hotline: +1 (800) 555-0199</div>
+            <div class="receipt-store-sub">BIN/VAT #99283719 &bull; POS Terminal #01</div>
+          </div>
+          <div class="receipt-divider"></div>
+          <div class="receipt-meta-row">
+            <span>Invoice: <strong id="recInvoiceNum">#ORD-1048</strong></span>
+            <span id="recDate">2026-09-21 01:38 PM</span>
+          </div>
+          <div class="receipt-meta-row">
+            <span id="recRefRow">Ref #: <strong id="recRefNum">None</strong></span>
+            <span id="recPricingMode">Retail Sale</span>
+          </div>
+          <div class="receipt-meta-row">
+            <span>Branch: <span id="recBranchName">Main Branch</span></span>
+            <span>Biller: <strong id="recBiller">Alex Smith</strong></span>
+          </div>
+          <div class="receipt-meta-row">
+            <span>Salesman: <strong id="recSalesman">Alex Smith</strong></span>
+            <span>Customer: <span id="recCustomer">Walk-in</span></span>
+          </div>
+          <div class="receipt-meta-row" id="recCustPhoneRow" style="display:none;">
+            <span>Contact: <span id="recCustomerPhone"></span></span>
+          </div>
+          <div class="receipt-divider"></div>
+          
+          <!-- Itemized Table with SKU & Warranty -->
+          <table class="receipt-items-table">
+            <thead>
+              <tr>
+                <th style="width: 50%;">Product / SKU</th>
+                <th style="width: 15%;">Qty</th>
+                <th style="width: 15%;" class="text-right">Price</th>
+                <th style="width: 20%;" class="text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody id="receiptItemsTbody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+
+          <div class="receipt-divider"></div>
+          <table class="receipt-totals-table">
+            <tr>
+              <td>Subtotal:</td>
+              <td class="text-right" id="recSubtotal">$0.00</td>
+            </tr>
+            <tr id="recDiscountRow" style="display:none;">
+              <td>Discount:</td>
+              <td class="text-right" id="recDiscount">-$0.00</td>
+            </tr>
+            <tr id="recCourierRow" style="display:none;">
+              <td>Courier Delivery Charge:</td>
+              <td class="text-right" id="recCourierFee">$0.00</td>
+            </tr>
+            <tr>
+              <td>VAT / Tax (5%):</td>
+              <td class="text-right" id="recTax">$0.00</td>
+            </tr>
+            <tr class="receipt-grand-total">
+              <td><strong>NET PAYABLE:</strong></td>
+              <td class="text-right"><strong id="recGrandTotal">$0.00</strong></td>
+            </tr>
+            <tr>
+              <td>Paid Via (<span id="recPayMethod">CASH</span>):</td>
+              <td class="text-right" id="recTendered">$0.00</td>
+            </tr>
+            <tr>
+              <td>Change Due:</td>
+              <td class="text-right" id="recChangeDue">$0.00</td>
+            </tr>
+            <tr id="recDueRow" style="display:none;">
+              <td style="color:#b91c1c; font-weight:700;">Remaining Due:</td>
+              <td class="text-right" style="color:#b91c1c; font-weight:700;" id="recDueAmount">$0.00</td>
+            </tr>
+            <tr id="recSalesNoteRow" style="display:none;">
+              <td>Sales Note:</td>
+              <td class="text-right" id="recSalesNote">-</td>
+            </tr>
+            <tr id="recPaymentNoteRow" style="display:none;">
+              <td>Pay Note:</td>
+              <td class="text-right" id="recPaymentNote">-</td>
+            </tr>
+          </table>
+
+          <!-- Retail Warranty & Return Terms Notice -->
+          <div class="receipt-warranty-terms" id="recTermsNotice">
+            <strong>Warranty & Return Policy:</strong><br />
+            &bull; 7 Days replacement for manufacturer defects with original box.<br />
+            &bull; Official warranty claims require this physical invoice copy.<br />
+            &bull; Electrical & electronic goods covered under brand warranty.
+          </div>
+
+          <div class="receipt-footer">
+            <p>Thank you for shopping at Nexus Retail!</p>
+            <p>Visit us online: www.nexusretailpos.com</p>
+            <div class="receipt-barcode">
+              <svg id="receiptBarcodeSvg" width="200" height="35"></svg>
+            </div>
+            <p style="font-size: 0.65rem; margin-top: 2px;" id="recBarcodeText">9823749283749</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-header" id="btnPrintReceiptBtn">
+          <i class="fa-solid fa-print"></i> Print Receipt
+        </button>
+        <button class="btn-pay-modal" id="btnNextOrder" style="padding: 8px 16px; font-size:0.88rem;">
+          <i class="fa-solid fa-plus"></i> New Order (Esc)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 3: HELD / PARKED ORDERS DRAWER
+       ========================================================================== -->
+  <div class="modal-overlay" id="heldOrdersModalOverlay">
+    <div class="pos-modal">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-clock-rotate-left"></i> Held / Parked Carts</h3>
+        <button class="btn-close-modal" id="btnCloseHeldModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="held-orders-list" id="heldOrdersList">
+          <!-- Dynamically Rendered -->
+        </div>
+        <div id="noHeldOrdersMsg" style="text-align:center; padding:30px; color:var(--text-subtle);">
+          <i class="fa-solid fa-pause" style="font-size:2.5rem; margin-bottom:10px; display:block;"></i>
+          No parked orders found. Press <strong>F6</strong> to park the current cart.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-header" id="btnCloseHeldOrdersBottom">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 4: CUSTOM NON-INVENTORY RETAIL ITEM
+       ========================================================================== -->
+  <div class="modal-overlay" id="customItemModalOverlay">
+    <div class="pos-modal" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-plus-circle"></i> Quick Custom / Non-Inventory Item</h3>
+        <button class="btn-close-modal" id="btnCloseCustomItemModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Product Name / Service Description</label>
+          <input type="text" class="form-input" id="customItemName" placeholder="e.g. Device Repair, Custom Gift Wrap, Special Order" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Unit Price</label>
+          <input type="number" step="0.01" class="form-input" id="customItemPrice" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quantity</label>
+          <input type="number" min="1" value="1" class="form-input" id="customItemQty" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Warranty (Optional)</label>
+          <input type="text" class="form-input" id="customItemWarranty" placeholder="e.g. 1 Month Service, 1 Year" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-header" id="btnCancelCustomItem">Cancel</button>
+        <button class="btn-pay-modal" id="btnAddCustomItemSubmit" style="padding: 8px 16px; font-size:0.88rem;">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 5: CUSTOMER LOOKUP & ADD (WITH DUE / CREDIT BALANCE)
+       ========================================================================== -->
+  <div class="modal-overlay" id="customerModalOverlay">
+    <div class="pos-modal" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-users"></i> Select or Register Customer</h3>
+        <button class="btn-close-modal" id="btnCloseCustomerModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="form-input" id="customerSearchInput" placeholder="Search customer by name or phone..." style="margin-bottom:10px;" />
+        
+        <div style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto;" id="customerSearchResults">
+          <!-- Pre-populated customer list with points and due balance -->
+        </div>
+
+        <div style="margin-top:14px; padding-top:12px; border-top:1px dashed var(--border-color);">
+          <span style="font-size:0.85rem; font-weight:700; display:block; margin-bottom:8px;">Quick Register New Customer:</span>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; gap:8px;">
+              <input type="text" class="form-input" id="newCustName" placeholder="Customer Full Name" />
+              <input type="tel" class="form-input" id="newCustPhone" placeholder="Mobile Phone #" />
+            </div>
+            <div style="display:flex; gap:8px;">
+              <input type="text" class="form-input" id="newCustAddress" placeholder="Address / Location (Optional)" />
+              <button class="btn-tool" id="btnSaveNewCustomer" style="background:var(--primary); color:white; border:none; white-space:nowrap; padding:0 16px; font-weight:700;">Save & Select</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-header" id="btnSelectWalkIn">Set as Walk-in Customer</button>
+        <button class="btn-header" id="btnCloseCustModalBottom">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 6: KEYBOARD SHORTCUTS CHEAT SHEET (F1)
+       ========================================================================== -->
+  <div class="modal-overlay" id="shortcutsModalOverlay">
+    <div class="pos-modal" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-keyboard"></i> Retail POS Shortcut Keys</h3>
+        <button class="btn-close-modal" id="btnCloseShortcutsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>Help Guide</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">F1</kbd>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>Charge / Pay</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">F2</kbd>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>Barcode Quick Scan</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">F3</kbd>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>Catalog Search</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">F4</kbd>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>Hold Current Cart</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">F6</kbd>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>Clear Cart</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">F7</kbd>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>Select Customer</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">F8</kbd>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>Close Window</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">Esc</kbd>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>Print Receipt</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">Enter</kbd>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-app); border-radius:var(--radius-md);">
+            <span>POS Calculator</span>
+            <kbd style="background:white; border:1px solid #cbd5e1; padding:2px 8px; border-radius:4px; font-weight:700;">F10</kbd>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-pay-modal" id="btnCloseShortcutsBottom" style="padding:8px 16px; font-size:0.88rem;">Got It</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 7: VIRTUAL NUMPAD MODAL (QUICK TOUCH QUANTITY & PRICE)
+       ========================================================================== -->
+  <div class="modal-overlay" id="numpadModalOverlay">
+    <div class="pos-modal" style="max-width: 360px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-calculator"></i> Quick Numeric Keypad</h3>
+        <button class="btn-close-modal" id="btnCloseNumpadModal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div style="text-align:center; margin-bottom: 12px;">
+          <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;" id="numpadTargetLabel">Set Quantity for Item</span>
+          <div style="font-size: 2.2rem; font-family:var(--font-mono); font-weight:800; color:var(--primary); background:var(--bg-app); padding:8px; border-radius:var(--radius-md); margin-top:4px;" id="numpadDisplayValue">1</div>
+        </div>
+        <div class="numpad-grid">
+          <button class="numpad-key" data-key="7">7</button>
+          <button class="numpad-key" data-key="8">8</button>
+          <button class="numpad-key" data-key="9">9</button>
+          <button class="numpad-key" data-key="4">4</button>
+          <button class="numpad-key" data-key="5">5</button>
+          <button class="numpad-key" data-key="6">6</button>
+          <button class="numpad-key" data-key="1">1</button>
+          <button class="numpad-key" data-key="2">2</button>
+          <button class="numpad-key" data-key="3">3</button>
+          <button class="numpad-key key-clear" data-key="C">C</button>
+          <button class="numpad-key" data-key="0">0</button>
+          <button class="numpad-key" data-key="00">00</button>
+          <button class="numpad-key key-enter" id="btnNumpadSubmit">Confirm (Enter)</button>
+        </div>
+        <div class="numpad-preset-row">
+          <button class="numpad-preset-btn" data-preset="1">+1</button>
+          <button class="numpad-preset-btn" data-preset="5">+5</button>
+          <button class="numpad-preset-btn" data-preset="10">+10</button>
+          <button class="numpad-preset-btn" data-preset="25">+25</button>
+          <button class="numpad-preset-btn" data-preset="50">+50</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 8: CASH DRAWER & SHIFT SUMMARY (SALESMAN PERFORMANCE)
+       ========================================================================== -->
+  <div class="modal-overlay" id="shiftSummaryModalOverlay">
+    <div class="pos-modal" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-cash-register" style="color:var(--success);"></i> Shift Cash Drawer Summary</h3>
+        <button class="btn-close-modal" id="btnCloseShiftModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+          <div style="background:var(--bg-app); padding:12px; border-radius:var(--radius-md);">
+            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">Opening Cash Float</span>
+            <div style="font-size:1.25rem; font-weight:800; font-family:var(--font-mono); color:var(--text-main);" id="shiftOpeningFloat">$200.00</div>
+          </div>
+          <div style="background:var(--success-light); padding:12px; border-radius:var(--radius-md); border:1px solid var(--success-border);">
+            <span style="font-size:0.75rem; color:#065f46; font-weight:700;">Expected Cash in Drawer</span>
+            <div style="font-size:1.25rem; font-weight:800; font-family:var(--font-mono); color:#065f46;" id="shiftCashInDrawer">$0.00</div>
+          </div>
+        </div>
+
+        <table style="width:100%; font-size:0.85rem; border-collapse:collapse;">
+          <tr style="border-bottom:1px solid var(--border-color); height:32px;">
+            <td style="color:var(--text-muted);"><i class="fa-solid fa-money-bill-wave"></i> Cash Sales</td>
+            <td style="text-align:right; font-weight:800; font-family:var(--font-mono);" id="shiftCashSales">$0.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border-color); height:32px;">
+            <td style="color:var(--text-muted);"><i class="fa-solid fa-credit-card"></i> Card Sales</td>
+            <td style="text-align:right; font-weight:800; font-family:var(--font-mono);" id="shiftCardSales">$0.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border-color); height:32px;">
+            <td style="color:var(--text-muted);"><i class="fa-solid fa-mobile-screen-button"></i> Mobile (bKash/Nagad) Sales</td>
+            <td style="text-align:right; font-weight:800; font-family:var(--font-mono);" id="shiftMobileSales">$0.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border-color); height:32px;">
+            <td style="color:var(--text-muted);"><i class="fa-solid fa-file-invoice-dollar"></i> Due / Credit Sales</td>
+            <td style="text-align:right; font-weight:800; font-family:var(--font-mono); color:var(--danger);" id="shiftDueSales">$0.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border-color); height:32px;">
+            <td style="color:var(--text-muted);"><i class="fa-solid fa-file-invoice"></i> Total Invoices Created</td>
+            <td style="text-align:right; font-weight:800; font-family:var(--font-mono);" id="shiftTotalInvoices">38</td>
+          </tr>
+          <tr style="height:38px; font-weight:800;">
+            <td style="font-size:0.95rem;">TOTAL REVENUE TODAY:</td>
+            <td style="text-align:right; font-size:1.15rem; font-family:var(--font-mono); color:var(--primary);" id="shiftTotalRevenue">$0.00</td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-header" id="btnPrintShiftReport"><i class="fa-solid fa-print"></i> Print Shift Report</button>
+        <button class="btn-header" id="btnCloseShiftModalBottom">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 9: ITEM DISCOUNT MODAL (PERCENTAGE OR FLAT)
+       ========================================================================== -->
+  <div class="modal-overlay" id="itemDiscountModalOverlay">
+    <div class="pos-modal" style="max-width: 380px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-tag"></i> Item Discount</h3>
+        <button class="btn-close-modal" id="btnCloseItemDiscModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:0.85rem; font-weight:700; color:var(--text-main); margin-bottom:10px;" id="itemDiscTargetName">Product Name</div>
+        <div style="display:flex; gap:6px; margin-bottom:12px;">
+          <button class="btn-tool active-tool" id="btnDiscTypePercent" style="flex:1;">% Percentage</button>
+          <button class="btn-tool" id="btnDiscTypeFlat" style="flex:1;">Flat Amount</button>
+        </div>
+        <input type="number" step="any" min="0" class="form-input" id="itemDiscValueInput" placeholder="Enter discount value" />
+        <div style="display:flex; gap:6px; margin-top:10px;">
+          <button class="btn-disc item-quick-disc" data-itemdisc="5">5%</button>
+          <button class="btn-disc item-quick-disc" data-itemdisc="10">10%</button>
+          <button class="btn-disc item-quick-disc" data-itemdisc="15">15%</button>
+          <button class="btn-disc item-quick-disc" data-itemdisc="20">20%</button>
+          <button class="btn-disc item-quick-disc" data-itemdisc="0" style="color:var(--danger);">Clear</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-header" id="btnCancelItemDisc">Cancel</button>
+        <button class="btn-pay-modal" id="btnApplyItemDisc" style="padding:8px 16px; font-size:0.88rem;">Apply Discount</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ==========================================================================
+       MODAL 12: PRODUCT ITEM NOTE & INSTRUCTIONS MODAL
+       ========================================================================== -->
+  <div class="modal-overlay" id="itemNoteModalOverlay">
+    <div class="pos-modal" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-note-sticky" style="color:#f59e0b;"></i> Product Item Note</h3>
+        <button class="btn-close-modal" id="btnCloseItemNoteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Target Product Summary Card -->
+        <div class="modal-note-product-card">
+          <img id="itemNoteModalThumb" src="" alt="Product" class="modal-note-thumb" />
+          <div class="modal-note-details">
+            <h5 id="itemNoteModalName" class="modal-note-name">Product Name</h5>
+            <div class="modal-note-meta">
+              <span id="itemNoteModalSku" class="cart-sku-tag">SKU-000</span>
+              <span id="itemNoteModalPrice" class="modal-note-price">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+          <label for="itemNoteTextarea" style="font-size: 0.78rem; font-weight: 700; color: var(--text-main);">Special Note / Serial / Instructions:</label>
+          <span id="itemNoteCharCount" style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">0 / 120</span>
+        </div>
+
+        <!-- Note Textarea -->
+        <textarea
+          id="itemNoteTextarea"
+          class="form-input modal-note-textarea"
+          rows="3"
+          maxlength="120"
+          placeholder="e.g. SN: 984210982, Gift wrap requested, Size: XL, Red variant, Fragile..."
+        ></textarea>
+
+        <!-- Quick Presets -->
+        <div style="margin-top: 10px;">
+          <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">Quick Presets:</span>
+          <div class="note-preset-tags">
+            <button type="button" class="btn-note-tag" data-tag="SN: ">+ SN: </button>
+            <button type="button" class="btn-note-tag" data-tag="Gift Wrap">+ Gift Wrap</button>
+            <button type="button" class="btn-note-tag" data-tag="Fragile">+ Fragile</button>
+            <button type="button" class="btn-note-tag" data-tag="Urgent Delivery">+ Urgent</button>
+            <button type="button" class="btn-note-tag" data-tag="Custom Order">+ Custom</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button class="btn-header" id="btnClearItemNote" style="color: var(--danger);"><i class="fa-solid fa-trash-can"></i> Clear</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-header" id="btnCancelItemNote">Cancel</button>
+          <button class="btn-pay-modal" id="btnSaveItemNote" style="padding: 8px 18px; font-size: 0.88rem;"><i class="fa-solid fa-check"></i> Save Note</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 13: Advanced Product Edit Modal (Price, VAT, Promo Rates, Product Discount, Warranty, Qty-Wise IMEI) -->
+  <div class="modal-overlay" id="productEditModalOverlay">
+    <div class="pos-modal product-edit-modal">
+      <div class="modal-header">
+        <div class="product-edit-header-title">
+          <i class="fa-solid fa-sliders" style="color: var(--primary);"></i>
+          <div>
+            <h3 class="modal-title">Edit Cart Product</h3>
+            <span class="product-edit-subtitle">Pricing Tiers, Unit Price, Warranty & Unit-Wise IMEI Management</span>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseProductEditModal">&times;</button>
+      </div>
+
+      <div class="modal-body product-edit-modal-body">
+        <!-- Product Identity Hero Card -->
+        <div class="product-edit-hero-card">
+          <img id="productEditThumb" src="" alt="Product" class="product-edit-hero-thumb" />
+          <div class="product-edit-hero-info">
+            <h4 id="productEditName" class="product-edit-hero-name">Product Name</h4>
+            <div class="product-edit-hero-meta">
+              <span class="cart-sku-tag" id="productEditSku">SKU-001</span>
+              <span class="product-edit-barcode-tag"><i class="fa-solid fa-barcode"></i> <span id="productEditBarcode">8901001</span></span>
+              <span class="product-edit-unit-tag" id="productEditUnitBadge"><i class="fa-solid fa-box"></i> Unit: Pcs</span>
+              <span class="product-edit-warranty-badge" id="productEditFixedWarranty"><i class="fa-solid fa-shield-halved"></i> 1 Yr Warranty</span>
+            </div>
+          </div>
+          <div class="product-edit-hero-qty">
+            <span class="hero-qty-label">In Cart Quantity</span>
+            <span class="hero-qty-val" id="productEditCartQty">1 Pcs</span>
+          </div>
+        </div>
+
+        <!-- Section 1: Dropdown-Based Pricing Tier & Unit Price Management -->
+        <div class="product-edit-section">
+          <!-- <div class="product-edit-section-header">
+            <span class="section-badge"><i class="fa-solid fa-tags"></i> Pricing Tiers & Unit Rate</span>
+            <span class="section-hint">Select tier from dropdown or enter custom price</span>
+          </div> -->
+
+          <div class="pricing-dropdown-card">
+            <!-- Row 1: Dropdown Selector & Direct Unit Price Input -->
+            <div class="pricing-dropdown-deck">
+              <div class="pricing-select-group">
+                <label class="product-edit-field-label" for="productPriceTierSelect">
+                  <i class="fa-solid fa-layer-group"></i> Pricing Tier (3 Rates):
+                </label>
+                <div class="pricing-select-wrap">
+                  <select id="productPriceTierSelect" class="product-price-tier-select" aria-label="Select Pricing Tier">
+                    <option value="regular" id="optRegularRate">🏷️ Regular MRP - $0.00 (Standard)</option>
+                    <option value="promo" id="optPromoRate" selected>⚡ Promotional Offer - $0.00 (Campaign Deal)</option>
+                    <option value="wholesale" id="optWholesaleRate">📦 Wholesale Rate - $0.00 (B2B Volume)</option>
+                    <option value="custom" id="optCustomRate">✏️ Custom Unit Price Override...</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down select-arrow-icon"></i>
+                </div>
+              </div>
+
+              <div class="pricing-unit-input-group">
+                <label class="product-edit-field-label" for="modalUnitPriceInput">
+                  <i class="fa-solid fa-coins"></i> Active Unit Price:
+                </label>
+                <div class="pricing-input-wrap">
+                  <span class="pricing-currency-symbol">$</span>
+                  <input
+                    type="number"
+                    id="modalUnitPriceInput"
+                    step="any"
+                    min="0"
+                    class="modal-unit-price-input"
+                    placeholder="0.00"
+                    title="Direct Unit Price (Type to override)"
+                  />
+                  <span class="pricing-tier-tag tag-promo" id="activeTierBadge">Promo</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 2: Selected Tier Live Context Banner (Savings, Campaign Info) -->
+            <div class="pricing-tier-banner" id="pricingTierBanner">
+              <div class="tier-banner-icon" id="tierBannerIcon"><i class="fa-solid fa-bolt"></i></div>
+              <div class="tier-banner-info">
+                <div class="tier-banner-title" id="tierBannerTitle">Promotional Offer Applied</div>
+                <div class="tier-banner-desc" id="tierBannerDesc">Active promotional deal saving $0.00 per unit compared to Regular MRP.</div>
+              </div>
+              <span class="tier-savings-chip chip-promo" id="tierSavingsChip">Save $0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Unit-Wise IMEI / Serial Numbers & Quantity Stepper -->
+        <div class="product-edit-section" id="productEditImeiSection">
+          <div class="product-edit-section-header">
+            <div class="imei-section-title-wrap">
+              <span class="section-badge"><i class="fa-solid fa-mobile-screen" style="color:#8b5cf6;"></i> Unit Serial / IMEI Numbers:</span>
+            </div>
+            
+            <div class="imei-header-controls">
+              <!-- Interactive Quantity Stepper (+ / -) -->
+              <div class="modal-qty-stepper-deck" title="Adjust Quantity & Manage Unit IMEIs">
+                <span class="stepper-deck-label">Qty:</span>
+                <button type="button" class="btn-modal-qty-step" id="btnModalQtyMinus" title="Decrease Quantity"><i class="fa-solid fa-minus"></i></button>
+                <span class="modal-qty-step-val" id="modalQtyVal">1</span>
+                <button type="button" class="btn-modal-qty-step" id="btnModalQtyPlus" title="Increase Quantity & Add Demo IMEI"><i class="fa-solid fa-plus"></i></button>
+              </div>
+
+              <div class="imei-deck-actions">
+                <button type="button" class="btn-section-action btn-action-danger" id="btnClearAllImeis" title="Clear all entered IMEIs">
+                  <i class="fa-solid fa-trash-can"></i> Clear All
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="imei-units-container" id="productEditImeiList">
+            <!-- Dynamically populated per item quantity in app.js -->
+          </div>
+        </div>
+
+        <!-- Section 4: Real-Time Live Line Calculation Preview -->
+        <div class="product-edit-calc-summary">
+          <div class="calc-row">
+            <span>Subtotal (<span id="summaryEditQtyLine">1</span> &times; <span id="summaryEditPriceEach">$0.00</span>):</span>
+            <strong id="summaryEditGross">$0.00</strong>
+          </div>
+          <div class="calc-row calc-total-row">
+            <span>Net Line Payable:</span>
+            <span class="calc-grand-total" id="summaryEditNetTotal">$0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer product-edit-modal-footer">
+        <button type="button" class="btn-header" id="btnResetProductEdit" style="color: var(--danger);"><i class="fa-solid fa-arrow-rotate-left"></i> Reset Defaults</button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-header" id="btnCancelProductEdit">Cancel</button>
+          <button type="button" class="btn-pay-modal" id="btnSaveProductEdit" style="padding: 9px 24px; font-size: 0.88rem;"><i class="fa-solid fa-check"></i> Apply & Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ==========================================================================
+       MODAL 12: LIST OF RECENT RECEIPTS & INVOICES (F9)
+       ========================================================================== -->
+  <div class="modal-overlay" id="recentReceiptsModalOverlay">
+    <div class="pos-modal modal-wide" style="max-width: 840px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-receipt" style="color:var(--primary);"></i> Recent Receipts & Invoices</h3>
+        <button class="btn-close-modal" id="btnCloseRecentReceiptsModal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div class="recent-filter-bar">
+          <div class="recent-search-wrap">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="recentReceiptsSearchInput" class="recent-search-input" placeholder="Search by Invoice #, Customer, Salesman, Phone..." autocomplete="off" />
+          </div>
+          <select id="recentReceiptsBranchFilter" class="recent-select-filter">
+            <option value="all">All Branches</option>
+            <option value="Main Branch (Downtown HQ)">Downtown HQ</option>
+            <option value="Airport Express Store">Airport Express</option>
+            <option value="North City Showroom">North City</option>
+            <option value="Uptown Mega Store">Uptown Mega</option>
+          </select>
+        </div>
+
+        <div class="recent-table-wrapper">
+          <table class="recent-data-table" id="recentReceiptsTable">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Date & Time</th>
+                <th>Customer</th>
+                <th>Branch</th>
+                <th>Salesman</th>
+                <th>Items</th>
+                <th class="text-right">Grand Total</th>
+                <th>Method</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recentReceiptsTbody">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="recent-table-count" id="recentReceiptsCountLabel">Showing 0 receipts</span>
+        <button class="btn-header" id="btnCloseRecentReceiptsBottom">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 13: LIST OF RECENT TRANSACTIONS (CASH & DIGITAL SALES LEDGER)
+       ========================================================================== -->
+  <div class="modal-overlay" id="recentTransactionsModalOverlay">
+    <div class="pos-modal modal-wide" style="max-width: 880px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-money-bill-transfer" style="color:#059669;"></i> Cash Register & Payment Transactions</h3>
+        <button class="btn-close-modal" id="btnCloseTransactionsModal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <!-- KPI Summary Cards -->
+        <div class="trx-kpi-grid">
+          <div class="trx-kpi-card">
+            <span class="trx-kpi-title">Total Collected</span>
+            <strong class="trx-kpi-value text-success" id="trxKpiTotalSales">$0.00</strong>
+          </div>
+          <div class="trx-kpi-card">
+            <span class="trx-kpi-title">Cash in Drawer</span>
+            <strong class="trx-kpi-value" id="trxKpiCash">$0.00</strong>
+          </div>
+          <div class="trx-kpi-card">
+            <span class="trx-kpi-title">Card / Digital</span>
+            <strong class="trx-kpi-value text-primary" id="trxKpiCard">$0.00</strong>
+          </div>
+          <div class="trx-kpi-card">
+            <span class="trx-kpi-title">Due Receivables</span>
+            <strong class="trx-kpi-value text-warning" id="trxKpiDue">$0.00</strong>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="trx-filter-tabs" id="trxFilterTabs">
+          <button class="btn-trx-tab active" data-filter="all">All Transactions</button>
+          <button class="btn-trx-tab" data-filter="CASH">Cash</button>
+          <button class="btn-trx-tab" data-filter="CARD">Credit Card</button>
+          <button class="btn-trx-tab" data-filter="MOBILE">Mobile Banking</button>
+          <button class="btn-trx-tab" data-filter="DUE">Due / Credit</button>
+        </div>
+
+        <div class="recent-table-wrapper">
+          <table class="recent-data-table" id="recentTransactionsTable">
+            <thead>
+              <tr>
+                <th>Trx ID</th>
+                <th>Order Ref</th>
+                <th>Timestamp</th>
+                <th>Customer</th>
+                <th>Biller</th>
+                <th>Payment Mode</th>
+                <th class="text-right">Paid Amount</th>
+                <th class="text-right">Change</th>
+                <th class="text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="recentTransactionsTbody">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="recent-table-count" id="recentTrxCountLabel">Showing 0 transactions</span>
+        <button class="btn-header" id="btnCloseTransactionsBottom">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 14: ITEM IMEI / SERIAL NUMBER SCANNER & INPUT
+       ========================================================================== -->
+  <div class="modal-overlay" id="itemImeiModalOverlay">
+    <div class="pos-modal" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-mobile-screen" style="color:#0284c7;"></i> Assign Item IMEI / Serial Number</h3>
+        <button class="btn-close-modal" id="btnCloseItemImeiModal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div style="background:var(--bg-app); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:12px;">
+          <strong id="imeiItemTargetName" style="display:block; font-size:0.92rem; color:var(--text-main);">Product Name</strong>
+          <small id="imeiItemTargetSku" style="color:var(--text-muted); font-family:var(--font-mono);">SKU: PR-001</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">IMEI / Unique Serial Number:</label>
+          <div style="display:flex; gap:8px;">
+            <input 
+              type="text" 
+              id="itemImeiInput" 
+              class="form-input" 
+              placeholder="Scan or type 15-digit IMEI / Serial..." 
+              autocomplete="off" 
+            />
+            <button type="button" class="btn-tool" id="btnGenerateSampleImei" title="Generate Sample IMEI" style="white-space:nowrap; padding:0 12px;">+</button>
+          </div>
+          <small style="color:var(--text-muted); display:block; margin-top:4px;">Supports handheld barcode & 2D QR scanners.</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-header" id="btnClearItemImei" style="color:var(--danger);">Clear IMEI</button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn-header" id="btnCancelItemImei">Cancel</button>
+          <button type="button" class="btn-pay-modal" id="btnSaveItemImei" style="padding:8px 18px; font-size:0.88rem;"><i class="fa-solid fa-check"></i> Save IMEI</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 15: EXECUTIVE POS CALCULATOR (RETAIL & CASH MATH)
+       ========================================================================== -->
+  <div class="modal-overlay" id="calculatorModalOverlay">
+    <div class="pos-modal calculator-modal">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:9px;">
+          <div class="calc-header-icon">
+            <i class="fa-solid fa-calculator"></i>
+          </div>
+          <div>
+            <h3 class="modal-title" style="margin:0; font-size:1.05rem; display:flex; align-items:center; gap:8px;">
+              POS Calculator
+              <span class="calc-pro-badge"><i class="fa-solid fa-bolt"></i> PRO</span>
+            </h3>
+            <span class="calc-modal-sub">Executive Retail & Cash Math Engine</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="btn-close-modal" id="btnCloseCalculatorModal" type="button" aria-label="Close Calculator">&times;</button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 16px;">
+        <!-- Top Screen / LCD Display Deck -->
+        <div class="calc-screen-deck">
+          <div class="calc-screen-top-row">
+            <div class="calc-mem-status-wrap">
+              <span class="calc-mem-chip" id="calcMemIndicator" style="display:none;">M</span>
+            </div>
+            <span class="calc-expr-preview" id="calcExpressionPreview">Ready</span>
+          </div>
+          <div class="calc-screen-main-row">
+            <div class="calc-main-display" id="calcMainDisplay">0</div>
+            <button type="button" class="btn-calc-screen-copy" id="btnCalcCopyDisplay" title="Copy value to clipboard">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Retail Quick Shortcuts Ribbon -->
+        <div class="calc-retail-ribbon">
+          <button type="button" class="btn-calc-ribbon" data-calc-action="percent_tax" data-tax="5">+5% Tax</button>
+          <button type="button" class="btn-calc-ribbon" data-calc-action="percent_tax" data-tax="15">+15% VAT</button>
+          <button type="button" class="btn-calc-ribbon" data-calc-action="percent_disc" data-disc="10">-10% Disc</button>
+          <button type="button" class="btn-calc-ribbon" data-calc-action="percent_disc" data-disc="20">-20% Disc</button>
+        </div>
+
+        <!-- Keypad Deck -->
+        <div class="calc-keypad-deck">
+          <!-- Row 1: Memory & Clear -->
+          <div class="calc-mem-grid">
+            <button type="button" class="calc-btn calc-btn-mem" data-calc-action="mem_clear" title="Memory Clear (MC)">MC</button>
+            <button type="button" class="calc-btn calc-btn-mem" data-calc-action="mem_recall" title="Memory Recall (MR)">MR</button>
+            <button type="button" class="calc-btn calc-btn-mem" data-calc-action="mem_add" title="Memory Add (M+)">M+</button>
+            <button type="button" class="calc-btn calc-btn-mem" data-calc-action="mem_sub" title="Memory Subtract (M-)">M-</button>
+            <button type="button" class="calc-btn calc-btn-clear" data-calc-action="clear" title="Clear / Reset (Esc / C)">AC</button>
+            <button type="button" class="calc-btn calc-btn-backspace" data-calc-action="backspace" title="Backspace (Backspace)"><i class="fa-solid fa-delete-left"></i></button>
+          </div>
+
+          <!-- 4-Column Keypad Grid -->
+          <div class="calc-main-keypad">
+            <button type="button" class="calc-btn calc-btn-op" data-calc-action="negate" title="Toggle Sign (±)">±</button>
+            <button type="button" class="calc-btn calc-btn-op" data-calc-action="percent" title="Percentage (%)">%</button>
+            <button type="button" class="calc-btn calc-btn-op calc-btn-operator" data-calc-action="divide" title="Divide (/)">÷</button>
+            <button type="button" class="calc-btn calc-btn-op calc-btn-operator" data-calc-action="multiply" title="Multiply (*)">×</button>
+
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="7">7</button>
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="8">8</button>
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="9">9</button>
+            <button type="button" class="calc-btn calc-btn-op calc-btn-operator" data-calc-action="subtract" title="Subtract (-)">−</button>
+
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="4">4</button>
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="5">5</button>
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="6">6</button>
+            <button type="button" class="calc-btn calc-btn-op calc-btn-operator" data-calc-action="add" title="Add (+)">+</button>
+
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="1">1</button>
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="2">2</button>
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="3">3</button>
+            <button type="button" class="calc-btn calc-btn-equal" data-calc-action="equals" title="Calculate (Enter / =)">=</button>
+
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="0">0</button>
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num="00">00</button>
+            <button type="button" class="calc-btn calc-btn-num" data-calc-num=".">.</button>
+          </div>
+        </div>
+
+        <!-- History Tape Collapsible / Recent calculations -->
+        <div class="calc-history-box">
+          <div class="calc-history-header">
+            <span class="calc-history-title"><i class="fa-solid fa-clock-rotate-left"></i> Calculation Tape</span>
+            <button type="button" class="btn-calc-clear-history" id="btnCalcClearHistory" title="Clear Tape">Clear</button>
+          </div>
+          <div class="calc-history-list" id="calcHistoryList">
+            <div class="calc-history-empty">No calculations yet</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+        <button type="button" class="btn-calc-tool-action" id="btnCalcApplyCash" title="Copy to Payment Modal Cash Received">
+          <i class="fa-solid fa-hand-holding-dollar"></i> Apply to Cash
+        </button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn-header" id="btnCalcCopyResult"><i class="fa-regular fa-copy"></i> Copy</button>
+          <button type="button" class="btn-pay-modal" id="btnCloseCalculatorBottom" style="padding:8px 18px; font-size:0.88rem;">Close (Esc)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
